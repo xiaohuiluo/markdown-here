@@ -15,7 +15,7 @@
 
 var cssEdit, cssSyntaxEdit, cssSyntaxSelect, rawMarkdownIframe, savedMsg,
   mathEnable, mathEdit, hotkeyShift, hotkeyCtrl, hotkeyAlt, hotkeyKey,
-  forgotToRenderCheckEnabled, headerAnchorsEnabled, gfmLineBreaksEnabled;
+  forgotToRenderCheckEnabled, headerAnchorsEnabled, gfmLineBreaksEnabled, highlightLineBreaksEnabled;
 var loaded = false;
 
 function onLoad() {
@@ -41,7 +41,7 @@ function onLoad() {
   forgotToRenderCheckEnabled = document.getElementById('forgot-to-render-check-enabled');
   headerAnchorsEnabled = document.getElementById('header-anchors-enabled');
   gfmLineBreaksEnabled = document.getElementById('gfm-line-breaks-enabled');
-
+  highlightLineBreaksEnabled = document.getElementById('highlight-line-breaks-enabled');
   //
   // Syntax highlighting styles and selection
   //
@@ -91,6 +91,7 @@ function onLoad() {
     headerAnchorsEnabled.checked = prefs['header-anchors-enabled'];
 
     gfmLineBreaksEnabled.checked = prefs['gfm-line-breaks-enabled'];
+    highlightLineBreaksEnabled.checked = prefs['highlight-line-breaks-enabled'];
 
     // Start watching for changes to the styles.
     setInterval(checkChange, 100);
@@ -229,7 +230,7 @@ function checkChange() {
         mathEnable.checked + mathEdit.value +
         hotkeyShift.checked + hotkeyCtrl.checked + hotkeyAlt.checked + hotkeyKey.value +
         forgotToRenderCheckEnabled.checked + headerAnchorsEnabled.checked +
-        gfmLineBreaksEnabled.checked;
+        gfmLineBreaksEnabled.checked + highlightLineBreaksEnabled.checked;
 
   if (newOptions !== lastOptions) {
     // CSS has changed.
@@ -260,7 +261,8 @@ function checkChange() {
                     },
           'forgot-to-render-check-enabled': forgotToRenderCheckEnabled.checked,
           'header-anchors-enabled': headerAnchorsEnabled.checked,
-          'gfm-line-breaks-enabled': gfmLineBreaksEnabled.checked
+          'gfm-line-breaks-enabled': gfmLineBreaksEnabled.checked,
+          'highlight-line-breaks-enabled': highlightLineBreaksEnabled.checked
         },
         function() {
           updateMarkdownRender();

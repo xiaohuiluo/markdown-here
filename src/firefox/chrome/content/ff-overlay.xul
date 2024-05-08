@@ -15,7 +15,7 @@
   </popup>
 
   <hbox id="urlbar-icons">
-    <image id="pageAction-markdown_here" insertafter="star-button"
+    <image id="action-markdown_here" insertafter="star-button"
            onclick="markdown_here.onToolbarButtonCommand(event)"
            tooltiptext="&toggle_button_tooltip;" />
   </hbox>

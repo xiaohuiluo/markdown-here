@@ -296,7 +296,7 @@ var markdown_here = {
       var btn, tooltipString;
 
       // Page action button
-      btn = document.getElementById('pageAction-markdown_here');
+      btn = document.getElementById('action-markdown_here');
       if (btn) {
         btn.setAttribute('collapsed', !show);
       }

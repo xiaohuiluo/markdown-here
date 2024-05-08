@@ -2,16 +2,16 @@
  * Page action (button in address bar)
  */
 
-/* Note that `#pageAction-markdown_here` is an `<image>`, so the `width` can be
+/* Note that `#action-markdown_here` is an `<image>`, so the `width` can be
    set directly. */
-#pageAction-markdown_here {
+#action-markdown_here {
   list-style-image: url("resource://markdown_here_common/images/icon14-button-monochrome.png");
   width: 14px;
   height: 14px;
 }
 
 @media (min-resolution: 2dppx) {
-  #pageAction-markdown_here {
+  #action-markdown_here {
     list-style-image: url("resource://markdown_here_common/images/icon28-button-monochrome.png");
   }
 }

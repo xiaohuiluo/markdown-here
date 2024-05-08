@@ -12,6 +12,17 @@
  * Chrome background script.
  */
 
+
+importScripts('../common/utils.js')
+importScripts('../common/common-logic.js')
+importScripts('../common/marked.js')
+importScripts('../common/highlightjs/highlight.js')
+importScripts('../common/markdown-render.js')
+importScripts('../common/options-store.js')
+
+
+let window = self;
+
 // On each load, check if we should show the options/changelist page.
 function onLoad() {
   // This timeout is a dirty hack to fix bug #119: "Markdown Here Upgrade
@@ -35,7 +46,7 @@ function upgradeCheck() {
       OptionsStore.set({ 'last-version': appManifest.version }, function() {
         // This is the very first time the extensions has been run, so show the
         // options page.
-        chrome.tabs.create({ url: chrome.extension.getURL(optionsURL) });
+        chrome.tabs.create({ url: chrome.runtime.getURL(optionsURL) });
       });
     }
     else if (options['last-version'] !== appManifest.version) {
@@ -45,7 +56,7 @@ function upgradeCheck() {
         // The extension has been newly updated
         optionsURL += '?prevVer=' + options['last-version'];
 
-        showUpgradeNotification(chrome.extension.getURL(optionsURL));
+        showUpgradeNotification(chrome.runtime.getURL(optionsURL));
       });
     }
   });
@@ -53,12 +64,27 @@ function upgradeCheck() {
 
 // Create the context menu that will signal our main code.
 chrome.contextMenus.create({
+  id: 'markdown-here',
   contexts: ['editable'],
   title: Utils.getMessage('context_menu_item'),
-  onclick: function(info, tab) {
-    chrome.tabs.sendMessage(tab.id, {action: 'context-click'});
+  // onclick: function(info, tab) {
+  //   chrome.tabs.sendMessage(tab.id, {action: 'context-click'});
+  // }
+});
+
+chrome.contextMenus.onClicked.addListener(function(info, tab) {
+  switch(info.menuItemId){
+      case 'markdown-here':
+        chrome.tabs.sendMessage(tab.id, {action: 'context-click'});
+        break;
   }
 });
+
+chrome.contextMenus.create({
+  id: 'markdown-here',
+  contexts: ['editable'],
+  title: Utils.getMessage('context_menu_item'),
+}, () => chrome.runtime.lastError);
 
 // Handle rendering requests from the content script.
 // See the comment in markdown-render.js for why we do this.
@@ -89,11 +115,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, responseCallback)
   }
   else if (request.action === 'show-toggle-button') {
     if (request.show) {
-      chrome.browserAction.enable(sender.tab.id);
-      chrome.browserAction.setTitle({
+      chrome.action.enable(sender.tab.id);
+      chrome.action.setTitle({
         title: Utils.getMessage('toggle_button_tooltip'),
         tabId: sender.tab.id });
-      chrome.browserAction.setIcon({
+      chrome.action.setIcon({
         path: {
           "16": Utils.getLocalURL('/common/images/icon16-button-monochrome.png'),
           "19": Utils.getLocalURL('/common/images/icon19-button-monochrome.png'),
@@ -105,11 +131,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, responseCallback)
       return false;
     }
     else {
-      chrome.browserAction.disable(sender.tab.id);
-      chrome.browserAction.setTitle({
+      chrome.action.disable(sender.tab.id);
+      chrome.action.setTitle({
         title: Utils.getMessage('toggle_button_tooltip_disabled'),
         tabId: sender.tab.id });
-      chrome.browserAction.setIcon({
+      chrome.action.setIcon({
         path: {
           "16": Utils.getLocalURL('/common/images/icon16-button-disabled.png'),
           "19": Utils.getLocalURL('/common/images/icon19-button-disabled.png'),
@@ -147,10 +173,19 @@ chrome.runtime.onMessage.addListener(function(request, sender, responseCallback)
   }
 });
 
-// Add the browserAction (the button in the browser toolbar) listener.
-chrome.browserAction.onClicked.addListener(function(tab) {
+// Add the action (the button in the browser toolbar) listener.
+chrome.action.onClicked.addListener(function(tab) {
   chrome.tabs.sendMessage(tab.id, {action: 'button-click', });
 });
+
+
+// chrome.runtime.onInstalled.addListener(function () {
+//   chrome.contextMenus.create({
+//     id: 'markdown-here',
+//     contexts: ['editable'],
+//     title: Utils.getMessage('context_menu_item'),
+//   });
+// });
 
 
 /*
